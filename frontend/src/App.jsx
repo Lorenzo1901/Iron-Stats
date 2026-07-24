@@ -1084,7 +1084,7 @@ export default function App() {
             onClick={() => { scrollToTab('stopwatch'); setSelectedSession(null); }}
             style={{ zIndex: 1, position: 'relative' }}
           >
-            <Timer size={16} /> Cronometro
+            <Timer size={16} /> Stopwatch
           </button>
           <button 
             className={`tab-btn ${activeTab === 'editor' ? 'active' : ''}`}
@@ -1641,7 +1641,7 @@ export default function App() {
         <StopwatchTab activeTab={activeTab} isMobile={isMobile} />
 
         {/* Full-Page Editor Tab */}
-        <div className={`swipe-view ${activeTab === 'editor' ? 'active-desktop' : ''}`} id="view-editor" style={{ position: 'relative' }}>
+        <div className={`swipe-view ${activeTab === 'editor' ? 'active-desktop' : ''}`} id="view-editor">
           
           {/* Mobile Editor Controls (belonging ONLY to the editor swipe view page) */}
           {isMobile && (
