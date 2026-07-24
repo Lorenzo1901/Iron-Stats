@@ -289,6 +289,11 @@ export default function App() {
     if (window.innerWidth > 768) return; // Only apply activeTab scroll sync on mobile
     if (isScrollingToTab.current) return; // Ignore programmatic scrolls to prevent transition conflicts
     
+    // Dismiss keyboard on swipe
+    if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) {
+      document.activeElement.blur();
+    }
+    
     const container = e.target;
     const scrollLeft = container.scrollLeft;
     const width = container.clientWidth;
@@ -471,6 +476,30 @@ export default function App() {
   const [exerciseError, setExerciseError] = useState('');
   const [editingCurveIndex, setEditingCurveIndex] = useState(null);
   const [tensionSliderPos, setTensionSliderPos] = useState(50); // 0-100 ROM % for mobile scrubber
+
+  // Handle mobile back button for modals
+  useEffect(() => {
+    const handlePopState = (e) => {
+      if (showNewProgramModal) setShowNewProgramModal(false);
+      if (showExerciseModal) setShowExerciseModal(false);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [showNewProgramModal, showExerciseModal]);
+
+  const modalOpenRef = useRef(false);
+  useEffect(() => {
+    const isModalOpen = showNewProgramModal || showExerciseModal;
+    if (isModalOpen && !modalOpenRef.current) {
+      window.history.pushState({ modal: true }, '');
+      modalOpenRef.current = true;
+    } else if (!isModalOpen && modalOpenRef.current) {
+      modalOpenRef.current = false;
+      if (window.history.state?.modal) {
+        window.history.back();
+      }
+    }
+  }, [showNewProgramModal, showExerciseModal]);
 
   const currentHasOverride = useMemo(() => {
     if (!editingOriginalName) return false;
